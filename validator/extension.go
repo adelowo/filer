@@ -20,8 +20,8 @@ func NewExtensionValidator(allowedExtensions []string) *ExtensionValidator {
 
 //Validate checks if a file is valid by looking at it's extension
 func (e *ExtensionValidator) Validate(m *multipart.FileHeader) bool {
-	//Stub
-	return true
+	return isValidExtension(
+		e.validExtensions, getExtensionFromFileName(m.Filename))
 }
 
 func isValidExtension(allowed []string, current string) bool {

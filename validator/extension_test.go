@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"mime/multipart"
 	"testing"
 )
 
@@ -41,5 +42,14 @@ func Test_isValidExtension(t *testing.T) {
         Encountered a non valid extension.. \n
         Expected %v Got %v`, v.isValid, ok)
 		}
+	}
+}
+
+func Test_ExtensionValidator_Validate(t *testing.T) {
+
+	validator := NewExtensionValidator([]string{"go", "php", "rb"})
+
+	if !validator.Validate(&multipart.FileHeader{Filename: "extension.go"}) {
+		t.Fatal("Validation failed even though the file extension is valid")
 	}
 }
