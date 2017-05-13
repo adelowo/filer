@@ -2,7 +2,7 @@ package validator
 
 import (
 	"mime/multipart"
-	"strings"
+	"path"
 )
 
 const extensionSeparator = '.'
@@ -38,6 +38,5 @@ func isValidExtension(allowed []string, current string) bool {
 }
 
 func getExtensionFromFileName(fileName string) string {
-	slice := strings.Split(fileName, string(extensionSeparator))
-	return slice[len(slice)-1]
+	return path.Ext(fileName)[1:]
 }
