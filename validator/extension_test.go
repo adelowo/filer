@@ -1,55 +1,46 @@
-package validator
+package validator_test
 
 import (
 	"mime/multipart"
-	"testing"
+
+	. "github.com/adelowo/filer/validator"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-var _ Validator = (*ExtensionValidator)(nil)
+var _ = Describe("Extension", func() {
 
-func Test_getExtensionFromFileName(t *testing.T) {
+	var val Validator
 
-	cases := map[string]struct {
-		fileName, expected string
-	}{
-		"filename with one dot": {"somefile.go", "go"},
-		"file with two dots":    {"go.trumps.php", "php"},
-	}
+	BeforeEach(func() {
+		val = NewExtensionValidator([]string{"go", "php", "md", "rb", "ts"})
+	})
 
-	for k, v := range cases {
-		if ext := getExtensionFromFileName(v.fileName); ext != v.expected {
-			t.Fatalf(`
-        Test for a %s failed ==== File extensions do not match..\n
-        Expected %s, Got %s`, k, v.expected, ext)
-		}
-	}
-}
+	Context("When validating a file with an invalid extension", func() {
 
-func Test_isValidExtension(t *testing.T) {
+		It("should fail with an error ", func() {
+			_, err := val.Validate(&multipart.FileHeader{Filename: "index.js"})
 
-	cases := []struct {
-		allowedExts []string
-		currentExt  string
-		isValid     bool
-	}{
-		{[]string{"go", "php", "rb"}, "js", false},
-		{[]string{"go", "php", "rb"}, "go", true},
-	}
+			Expect(err).To(HaveOccurred())
+		})
 
-	for _, v := range cases {
-		if ok := isValidExtension(v.allowedExts, v.currentExt); ok != v.isValid {
-			t.Fatalf(`
-        Encountered a non valid extension.. \n
-        Expected %v Got %v`, v.isValid, ok)
-		}
-	}
-}
+		It("should have a falsy value", func() {
+			isValid, _ := val.Validate(&multipart.FileHeader{Filename: "index.js"})
 
-func Test_ExtensionValidator_Validate(t *testing.T) {
+			Expect(isValid).To(BeFalse())
+		})
+	})
 
-	validator := NewExtensionValidator([]string{"go", "php", "rb"})
+	Context("When validating a file with a valid extension", func() {
+		It("should have a valid extension", func() {
+			Expect(val.Validate(&multipart.FileHeader{Filename: "main.go"})).To(BeTrue())
+		})
 
-	if !validator.Validate(&multipart.FileHeader{Filename: "extension.go"}) {
-		t.Fatal("Validation failed even though the file extension is valid")
-	}
-}
+		It("should not have an error", func() {
+			_, err := val.Validate(&multipart.FileHeader{Filename: "log.rb"})
+
+			Expect(err).NotTo(HaveOccurred())
+		})
+	})
+})

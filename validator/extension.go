@@ -1,11 +1,15 @@
 package validator
 
 import (
+	"errors"
 	"mime/multipart"
 	"path"
 )
 
-const extensionSeparator = '.'
+//ErrFileInvalidExtension is an error type that is rendered when
+//an extension is shown
+var ErrFileInvalidExtension = errors.New(
+	`extension validator: File has an invalid extension type`)
 
 //ExtensionValidator is a validator that validates a file based on it's extension
 //Extremely dumb and cannot be trusted
@@ -19,9 +23,13 @@ func NewExtensionValidator(allowedExtensions []string) *ExtensionValidator {
 }
 
 //Validate checks if a file is valid by looking at it's extension
-func (e *ExtensionValidator) Validate(m *multipart.FileHeader) bool {
-	return isValidExtension(
-		e.validExtensions, getExtensionFromFileName(m.Filename))
+func (e *ExtensionValidator) Validate(m *multipart.FileHeader) (bool, error) {
+	if isValidExtension(
+		e.validExtensions, getExtensionFromFileName(m.Filename)) {
+		return true, nil
+	}
+
+	return false, ErrFileInvalidExtension
 }
 
 func isValidExtension(allowed []string, current string) bool {
