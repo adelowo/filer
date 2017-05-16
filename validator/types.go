@@ -3,5 +3,5 @@ package validator
 import "mime/multipart"
 
 type Validator interface {
-	Validate(*multipart.FileHeader) bool
+	Validate(*multipart.FileHeader) (bool, error)
 }
