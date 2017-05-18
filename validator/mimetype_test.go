@@ -1,7 +1,7 @@
 package validator_test
 
 import (
-	"mime/multipart"
+	"os"
 
 	. "github.com/adelowo/filer/validator"
 
@@ -12,51 +12,35 @@ import (
 var _ = Describe("Mimetype", func() {
 
 	var val Validator
-	var m *multipart.FileHeader
+	var file *os.File
 
 	BeforeEach(func() {
 		val = NewMimeTypeValidator([]string{"image/jpeg", "image/png"})
+		file, _ = os.Open("./fixtures/gopher.jpg")
+
+		defer file.Close()
 	})
 
-	Context("When validating a file with an invalid path", func() {
-		It("should return an error", func() {
+	It("should not have an error if the mimetype is valid", func() {
+		isValid, err := val.Validate(file)
 
-			isValid, err := val.Validate(&multipart.FileHeader{Filename: "unknown-file"})
-
-			Expect(err).To(HaveOccurred())
-			Expect(isValid).To(BeFalse())
-		})
-
+		Expect(err).NotTo(HaveOccurred())
+		Expect(isValid).To(BeTrue())
 	})
 
-	Context("When validating a file with a known path", func() {
+	It("should return an errror if the mimetype is invalid", func() {
+		val = NewMimeTypeValidator([]string{"application/octet-stream"})
 
-		BeforeEach(func() {
-			m = &multipart.FileHeader{Filename: "./fixtures/gopher.jpg"}
-		})
+		isValid, err := val.Validate(file)
 
-		It("should not have an error if the mimetype is valid", func() {
-			isValid, err := val.Validate(m)
+		Expect(err).To(HaveOccurred())
+		Expect(err).Should(Equal(ErrFileInvalidMimeType))
 
-			Expect(err).NotTo(HaveOccurred())
-			Expect(isValid).To(BeTrue())
-		})
+		Expect(isValid).To(BeFalse())
+	})
 
-		It("should have a truthy value if the mimetype is valid", func() {
-			Expect(val.Validate(m)).To(BeTrue())
-		})
-
-		It("should return an errror if the mimetype is invalid", func() {
-			val = NewMimeTypeValidator([]string{"application/octet-stream"})
-
-			isValid, err := val.Validate(m)
-
-			Expect(err).To(HaveOccurred())
-			Expect(err).Should(Equal(ErrFileInvalidMimeType))
-
-			Expect(isValid).To(BeFalse())
-		})
-
+	It("should have a truthy value if the mimetype is valid", func() {
+		Expect(val.Validate(file)).To(BeTrue())
 	})
 
 })
