@@ -2,7 +2,6 @@ package validator
 
 import (
 	"errors"
-	"mime/multipart"
 	"os"
 )
 
@@ -36,15 +35,7 @@ func NewSizeValidator(maxSize, minSize int64) *SizeValidator {
 }
 
 //Validate validates a file based on it's size
-func (s *SizeValidator) Validate(m *multipart.FileHeader) (bool, error) {
-
-	f, err := os.Open(m.Filename)
-
-	defer f.Close()
-
-	if err != nil {
-		return false, err
-	}
+func (s *SizeValidator) Validate(f *os.File) (bool, error) {
 
 	info, err := f.Stat()
 

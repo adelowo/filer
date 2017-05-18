@@ -2,8 +2,9 @@ package validator
 
 import (
 	"errors"
-	"mime/multipart"
+	"os"
 	"path"
+	"strings"
 )
 
 //ErrFileInvalidExtension is an error type that is rendered when
@@ -23,9 +24,9 @@ func NewExtensionValidator(allowedExtensions []string) *ExtensionValidator {
 }
 
 //Validate checks if a file is valid by looking at it's extension
-func (e *ExtensionValidator) Validate(m *multipart.FileHeader) (bool, error) {
+func (e *ExtensionValidator) Validate(f *os.File) (bool, error) {
 	if isValidExtension(
-		e.validExtensions, getExtensionFromFileName(m.Filename)) {
+		e.validExtensions, getExtensionFromFileName(f.Name())) {
 		return true, nil
 	}
 
@@ -46,5 +47,21 @@ func isValidExtension(allowed []string, current string) bool {
 }
 
 func getExtensionFromFileName(fileName string) string {
-	return path.Ext(fileName)[1:]
+	return cleanExtension(path.Ext(fileName)[1:])
+}
+
+// This is here so as to remove all non-aphabetic characters.
+//The reasoning behind this is the fact that files are saved in the temp dir of the
+//system and Go suffixes them with some weird integer hence path.Ext would return
+//the integer alongside the original extension
+func cleanExtension(s string) string {
+
+	return strings.Map(func(r rune) rune {
+
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') {
+			return r
+		}
+
+		return -1
+	}, s)
 }
