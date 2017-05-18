@@ -1,7 +1,7 @@
 package validator
 
-import "mime/multipart"
+import "os"
 
 type Validator interface {
-	Validate(*multipart.FileHeader) (bool, error)
+	Validate(*os.File) (bool, error)
 }
