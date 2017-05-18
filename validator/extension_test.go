@@ -1,6 +1,7 @@
 package validator_test
 
 import (
+	"io/ioutil"
 	"os"
 
 	. "github.com/adelowo/filer/validator"
@@ -50,4 +51,23 @@ var _ = Describe("Extension", func() {
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
+
+	Context("Reading the name of a file saved in the temporary directory", func() {
+
+		It("Should remove all non alphabetic values left", func() {
+			val = NewExtensionValidator([]string{"jpg", "png"})
+
+			//This would return something like gopher.png1234
+			file, err := ioutil.TempFile("", "gopher.png")
+
+			defer os.Remove(file.Name())
+
+			defer file.Close()
+
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(val.Validate(file)).To(BeTrue())
+		})
+	})
+
 })
