@@ -2,7 +2,7 @@ package validator
 
 import (
 	"errors"
-	"mime/multipart"
+	"os"
 	"path"
 )
 
@@ -23,9 +23,9 @@ func NewExtensionValidator(allowedExtensions []string) *ExtensionValidator {
 }
 
 //Validate checks if a file is valid by looking at it's extension
-func (e *ExtensionValidator) Validate(m *multipart.FileHeader) (bool, error) {
+func (e *ExtensionValidator) Validate(f *os.File) (bool, error) {
 	if isValidExtension(
-		e.validExtensions, getExtensionFromFileName(m.Filename)) {
+		e.validExtensions, getExtensionFromFileName(f.Name())) {
 		return true, nil
 	}
 
