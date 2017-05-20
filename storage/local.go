@@ -9,6 +9,7 @@ import (
 
 const (
 	defaultDirectoryFilePerm = 0755
+	defaultFilePerm          = 0666
 )
 
 //LocalAdapter is a storage implementation that deals with file operations
@@ -25,11 +26,21 @@ func NewLocalAdapter(baseDir string, f afero.Fs) *LocalAdapter {
 
 func (l *LocalAdapter) Write(path string, r io.Reader) error {
 
-	if err := afero.WriteReader(l.afero, l.filePath(path), r); err != nil {
+	buf, err := afero.ReadAll(r)
+
+	if err != nil {
+		return err
+	}
+
+	if err := l.afero.WriteFile(l.filePath(path), buf, defaultFilePerm); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (l *LocalAdapter) Delete(path string) error {
+	return l.afero.Remove(l.filePath(path))
 }
 
 func (l *LocalAdapter) filePath(path string) string {
