@@ -1,6 +1,9 @@
 package validator
 
-import "os"
+import (
+	"io"
+	"os"
+)
 
 type Validator interface {
 	Validate(File) (bool, error)
@@ -11,4 +14,5 @@ type Validator interface {
 type File interface {
 	Name() string
 	Stat() (os.FileInfo, error)
+	io.Reader
 }
