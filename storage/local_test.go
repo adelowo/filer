@@ -3,6 +3,7 @@ package storage_test
 import (
 	"bytes"
 	"os"
+	"path/filepath"
 	"strings"
 
 	. "github.com/adelowo/filer/storage"
@@ -16,18 +17,22 @@ var _ Store = (*LocalAdapter)(nil)
 
 var _ = Describe("Local", func() {
 
+	var local Store
 	var fs afero.Fs
+
+	BeforeEach(func() {
+		fs = afero.NewMemMapFs()
+		local = NewLocalAdapter("users", fs, nil)
+	})
+
+	JustBeforeEach(func() {
+		fs.RemoveAll("users")
+	})
 
 	Context("Writing a file", func() {
 
-		BeforeEach(func() {
-			fs = afero.NewMemMapFs()
-		})
-
 		It("should not have an error", func() {
-			local := NewLocalAdapter("uploads", fs)
 			r := bytes.NewReader([]byte("Lanre Adelowo"))
-
 			Expect(local.Write("users/42", r)).NotTo(HaveOccurred())
 		})
 	})
@@ -36,7 +41,6 @@ var _ = Describe("Local", func() {
 
 		It("Should not have any error", func() {
 			By("Deleting the file", func() {
-				local := NewLocalAdapter("uploads", fs)
 				//Write some data
 				local.Write("users/42", strings.NewReader("Lanre Adelowo"))
 
@@ -46,12 +50,43 @@ var _ = Describe("Local", func() {
 		})
 
 		It("Cannot delete a non existent file", func() {
-			local := NewLocalAdapter("uploads", fs)
-
 			err := local.Delete("unknown/path")
 
 			Expect(err).To(HaveOccurred())
 			Expect(err).To(BeAssignableToTypeOf(&os.PathError{}))
 		})
+	})
+
+	It("Checks if a file exists", func() {
+
+		By("returning an error if the file doesn't exist", func() {
+			_, err := local.Has("somepath")
+
+			Expect(err).To(HaveOccurred())
+			Expect(err).To(BeEquivalentTo(ErrLocalFileDoesNotExist))
+		})
+
+		By("Returning a falsy value if the file does not exist", func() {
+			exists, _ := local.Has("somepath")
+
+			Expect(exists).To(BeFalse())
+		})
+
+		By("Returning a truthy value and no error if the file exists", func() {
+
+			local.Write("somepath", strings.NewReader("Yup! Just wrote some data"))
+
+			exists, err := local.Has("somepath")
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(exists).To(BeTrue())
+		})
+	})
+
+	It("Should return the URL for a given path", func() {
+		//From the setup, we have the base directory as "users"
+		expected := filepath.Join("users", "avatars", "lanre", "large", "x.jpg")
+
+		Expect(local.URL("avatars/lanre/large/x.jpg")).Should(Equal(expected))
 	})
 })
