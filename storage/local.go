@@ -17,19 +17,19 @@ const (
 //with a given path does not exist on the disk
 var ErrLocalFileDoesNotExist = errors.New("Local: File does not exist")
 
-//KeyFunc is a file path generator
-type KeyFunc func(path string) string
+//FilePathFunc is a file path generator
+type FilePathFunc func(path string) string
 
 //LocalAdapter is a storage implementation that deals with file operations
 //on a physical disk
 type LocalAdapter struct {
 	baseDir string
 	afero   *afero.Afero
-	gen     KeyFunc
+	gen     FilePathFunc
 }
 
 //NewLocalAdapter returns an instance of the Local adapter
-func NewLocalAdapter(baseDir string, f afero.Fs, gen KeyFunc) *LocalAdapter {
+func NewLocalAdapter(baseDir string, f afero.Fs, gen FilePathFunc) *LocalAdapter {
 	l := &LocalAdapter{baseDir: baseDir, afero: &afero.Afero{Fs: f}}
 
 	if gen == nil {
