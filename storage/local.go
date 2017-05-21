@@ -49,7 +49,7 @@ func (l *LocalAdapter) Write(path string, r io.Reader) error {
 		return err
 	}
 
-	if err := l.afero.WriteFile(l.filePath(path), buf, defaultFilePerm); err != nil {
+	if err := l.afero.WriteFile(l.gen(path), buf, defaultFilePerm); err != nil {
 		return err
 	}
 
@@ -57,11 +57,11 @@ func (l *LocalAdapter) Write(path string, r io.Reader) error {
 }
 
 func (l *LocalAdapter) Delete(path string) error {
-	return l.afero.Remove(l.filePath(path))
+	return l.afero.Remove(l.gen(path))
 }
 
 func (l *LocalAdapter) Has(path string) (bool, error) {
-	exists, err := l.afero.Exists(l.filePath(path))
+	exists, err := l.afero.Exists(l.gen(path))
 
 	//The way afero handles Exists is kinda weird though
 	//err isn't supposed to be nil if exists is false
@@ -73,7 +73,7 @@ func (l *LocalAdapter) Has(path string) (bool, error) {
 }
 
 func (l *LocalAdapter) URL(path string) string {
-	return l.filePath(path)
+	return l.gen(path)
 }
 
 func (l *LocalAdapter) filePath(path string) string {
