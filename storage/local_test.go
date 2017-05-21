@@ -31,10 +31,20 @@ var _ = Describe("Local", func() {
 
 	Context("Writing a file", func() {
 
+		It("Should have an error if the file cannot be written to", func() {
+			fs = afero.NewReadOnlyFs(fs)
+			local = NewLocalAdapter("users", fs, nil)
+
+			Expect(local.Write("names/42",
+				strings.NewReader("Lanre Adelowo"))).To(HaveOccurred())
+		})
+
 		It("should not have an error", func() {
 			r := bytes.NewReader([]byte("Lanre Adelowo"))
 			Expect(local.Write("users/42", r)).NotTo(HaveOccurred())
 		})
+
+		//TODO (adelowo): Add tests for situations when io.Reader returns an erro
 	})
 
 	Context("Deleting a file", func() {
