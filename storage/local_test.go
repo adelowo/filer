@@ -89,4 +89,17 @@ var _ = Describe("Local", func() {
 
 		Expect(local.URL("avatars/lanre/large/x.jpg")).Should(Equal(expected))
 	})
+
+	It("Makes use of a custom filepath generator", func() {
+
+		pathPrefix := filepath.Join("oops", "whoops")
+
+		local = NewLocalAdapter("users", fs, func(path string) string {
+			return filepath.Join(pathPrefix, path)
+		})
+
+		expected := filepath.Join(pathPrefix, "shoops")
+
+		Expect(local.URL("shoops")).Should(Equal(expected))
+	})
 })
