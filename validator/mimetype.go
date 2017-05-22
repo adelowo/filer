@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
-	"os"
 )
 
 //ErrFileInvalidMimeType is an error type denoting a file with a mimetype
@@ -27,9 +26,9 @@ func NewMimeTypeValidator(mimeTypes []string) *MimeTypeValidator {
 //Validate validates a file by looking at it's mimetype.
 //Currrently, the mimetype of the file is gotten by through the DetectContentType
 //function in net/http.
-func (mime *MimeTypeValidator) Validate(f *os.File) (bool, error) {
+func (mime *MimeTypeValidator) Validate(f File) (bool, error) {
 
-	buf, err := ioutil.ReadFile(f.Name())
+	buf, err := ioutil.ReadAll(f)
 
 	if err != nil {
 		return false, err

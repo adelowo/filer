@@ -17,8 +17,10 @@ var _ = Describe("Mimetype", func() {
 	BeforeEach(func() {
 		val = NewMimeTypeValidator([]string{"image/jpeg", "image/png"})
 		file, _ = os.Open("./fixtures/gopher.jpg")
+	})
 
-		defer file.Close()
+	AfterEach(func() {
+		file.Close()
 	})
 
 	It("should not have an error if the mimetype is valid", func() {

@@ -1,6 +1,7 @@
 package validator_test
 
 import (
+	"bytes"
 	"os"
 
 	. "github.com/adelowo/filer/validator"
@@ -51,4 +52,23 @@ var _ = Describe("Size", func() {
 			Expect(isValid).To(BeTrue())
 		})
 	})
+
+	It("returns an error if the file metadata cannot be read", func() {
+		_, err := val.Validate(&mock{})
+
+		Expect(err).Should(HaveOccurred())
+		Expect(err).Should(BeAssignableToTypeOf(&os.PathError{}))
+	})
 })
+
+type mock struct{}
+
+func (m *mock) Name() string { return "Mock" }
+
+func (m *mock) Stat() (os.FileInfo, error) {
+	return nil, &os.PathError{Op: "stat"}
+}
+
+func (m *mock) Read(p []byte) (n int, err error) {
+	return -1, bytes.ErrTooLarge
+}
