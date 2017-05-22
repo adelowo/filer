@@ -18,7 +18,7 @@ const (
 var ErrLocalFileDoesNotExist = errors.New("Local: File does not exist")
 
 //FilePathFunc is a file path generator
-type FilePathFunc func(path string) string
+type FilePathFunc func(baseDirectory, path string) string
 
 //LocalAdapter is a storage implementation that deals with file operations
 //on a physical disk
@@ -33,7 +33,7 @@ func NewLocalAdapter(baseDir string, f afero.Fs, gen FilePathFunc) *LocalAdapter
 	l := &LocalAdapter{baseDir: baseDir, afero: &afero.Afero{Fs: f}}
 
 	if gen == nil {
-		l.gen = l.filePath
+		l.gen = filePathGenerator
 	} else {
 		l.gen = gen
 	}
@@ -49,7 +49,7 @@ func (l *LocalAdapter) Write(path string, r io.Reader) error {
 		return err
 	}
 
-	if err := l.afero.WriteFile(l.gen(path), buf, defaultFilePerm); err != nil {
+	if err := l.afero.WriteFile(l.gen(l.baseDir, path), buf, defaultFilePerm); err != nil {
 		return err
 	}
 
@@ -57,11 +57,11 @@ func (l *LocalAdapter) Write(path string, r io.Reader) error {
 }
 
 func (l *LocalAdapter) Delete(path string) error {
-	return l.afero.Remove(l.gen(path))
+	return l.afero.Remove(l.gen(l.baseDir, path))
 }
 
 func (l *LocalAdapter) Has(path string) (bool, error) {
-	exists, err := l.afero.Exists(l.gen(path))
+	exists, err := l.afero.Exists(l.gen(l.baseDir, path))
 
 	//The way afero handles Exists is kinda weird though
 	//err isn't supposed to be nil if exists is false
@@ -73,9 +73,9 @@ func (l *LocalAdapter) Has(path string) (bool, error) {
 }
 
 func (l *LocalAdapter) URL(path string) string {
-	return l.gen(path)
+	return l.gen(l.baseDir, path)
 }
 
-func (l *LocalAdapter) filePath(path string) string {
-	return filepath.Join(l.baseDir, path)
+func filePathGenerator(baseDirectory, path string) string {
+	return filepath.Join(baseDirectory, path)
 }

@@ -102,13 +102,15 @@ var _ = Describe("Local", func() {
 
 	It("Makes use of a custom filepath generator", func() {
 
+		baseDir := "users"
+
 		pathPrefix := filepath.Join("oops", "whoops")
 
-		local = NewLocalAdapter("users", fs, func(path string) string {
-			return filepath.Join(pathPrefix, path)
+		local = NewLocalAdapter(baseDir, fs, func(baseDirectory, path string) string {
+			return filepath.Join(baseDirectory, pathPrefix, path)
 		})
 
-		expected := filepath.Join(pathPrefix, "shoops")
+		expected := filepath.Join(baseDir, pathPrefix, "shoops")
 
 		Expect(local.URL("shoops")).Should(Equal(expected))
 	})
