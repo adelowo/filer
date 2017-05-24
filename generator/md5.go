@@ -9,10 +9,12 @@ import (
 	"github.com/adelowo/filer/validator"
 )
 
+//MD5Generator genrates the md5 sum of a file name
 type MD5Generator struct {
 	keepExtension bool
 }
 
+//NewMD5Generator returns an instance of an MD5Generator
 func NewMD5Generator(keepExt bool) *MD5Generator {
 	return &MD5Generator{keepExtension: keepExt}
 }
