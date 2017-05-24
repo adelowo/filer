@@ -1,9 +1,6 @@
 package generator_test
 
 import (
-	"bytes"
-	"os"
-
 	"github.com/adelowo/filer"
 	"github.com/adelowo/filer/generator"
 	. "github.com/onsi/ginkgo"
@@ -50,18 +47,4 @@ var _ = Describe("Md5", func() {
 func testGeneratedHashSum(hash string) {
 	Expect(hash).NotTo(BeEmpty())
 	Expect(hash).To(HaveLen(32))
-}
-
-type mock struct {
-	name string
-}
-
-func (m *mock) Name() string { return m.name }
-
-func (m *mock) Stat() (os.FileInfo, error) {
-	return nil, &os.PathError{Op: "stat"}
-}
-
-func (m *mock) Read(p []byte) (n int, err error) {
-	return -1, bytes.ErrTooLarge
 }
