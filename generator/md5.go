@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/adelowo/filer/validator"
+	"github.com/adelowo/filer"
 )
 
 //MD5Generator genrates the md5 sum of a file name
@@ -19,7 +19,7 @@ func NewMD5Generator(keepExt bool) *MD5Generator {
 	return &MD5Generator{keepExtension: keepExt}
 }
 
-func (m *MD5Generator) Generate(f validator.File) (string, error) {
+func (m *MD5Generator) Generate(f filer.File) (string, error) {
 
 	sum := md5.Sum([]byte(f.Name()))
 

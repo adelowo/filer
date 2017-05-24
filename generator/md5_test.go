@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"os"
 
+	"github.com/adelowo/filer"
 	"github.com/adelowo/filer/generator"
-	"github.com/adelowo/filer/validator"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -13,7 +13,7 @@ import (
 var _ = Describe("Md5", func() {
 
 	var gen generator.Generator
-	var f validator.File
+	var f filer.File
 
 	BeforeEach(func() {
 		gen = generator.NewMD5Generator(false)
