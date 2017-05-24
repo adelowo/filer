@@ -16,7 +16,7 @@ var _ = Describe("Md5", func() {
 	var f validator.File
 
 	BeforeEach(func() {
-		gen = generator.NewMD5Generator()
+		gen = generator.NewMD5Generator(false)
 		f = &mock{}
 	})
 
@@ -36,6 +36,14 @@ var _ = Describe("Md5", func() {
 		sum, _ := gen.Generate(f)
 		testGeneratedHashSum(sum)
 	})
+
+	It("Should generate a name and keep the extension of the original file name",
+		func() {
+			f = &mock{"picture.jpg"}
+			gen = generator.NewMD5Generator(true)
+			sum, _ := gen.Generate(f)
+			Expect(sum).To(HaveSuffix("jpg"))
+		})
 
 })
 
