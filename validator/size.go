@@ -2,6 +2,8 @@ package validator
 
 import (
 	"errors"
+
+	"github.com/adelowo/filer"
 )
 
 //ErrFileSizeTooLarge is an error type for files that signifies a file s
@@ -34,7 +36,7 @@ func NewSizeValidator(maxSize, minSize int64) *SizeValidator {
 }
 
 //Validate validates a file based on it's size
-func (s *SizeValidator) Validate(f File) (bool, error) {
+func (s *SizeValidator) Validate(f filer.File) (bool, error) {
 
 	info, err := f.Stat()
 

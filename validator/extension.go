@@ -4,6 +4,8 @@ import (
 	"errors"
 	"path"
 	"strings"
+
+	"github.com/adelowo/filer"
 )
 
 //ErrFileInvalidExtension is an error type that is rendered when
@@ -23,7 +25,7 @@ func NewExtensionValidator(allowedExtensions []string) *ExtensionValidator {
 }
 
 //Validate checks if a file is valid by looking at it's extension
-func (e *ExtensionValidator) Validate(f File) (bool, error) {
+func (e *ExtensionValidator) Validate(f filer.File) (bool, error) {
 	if isValidExtension(
 		e.validExtensions, getExtensionFromFileName(f.Name())) {
 		return true, nil
