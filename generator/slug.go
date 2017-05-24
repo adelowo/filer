@@ -20,6 +20,6 @@ func NewSlugGenerator() *SlugGenerator {
 	return &SlugGenerator{}
 }
 
-func (s *SlugGenerator) Generate(f filer.File) (string, error) {
-	return re.ReplaceAllString(f.Name(), "-"), nil
+func (s *SlugGenerator) Generate(f filer.File) string {
+	return re.ReplaceAllString(f.Name(), "-")
 }

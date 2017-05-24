@@ -17,20 +17,14 @@ var _ = Describe("Md5", func() {
 		f = &mock{}
 	})
 
-	It("Should not have an error", func() {
-		_, err := gen.Generate(f)
-
-		Expect(err).NotTo(HaveOccurred())
-	})
-
 	It("Should generate a string for a non empty string", func() {
 
-		sum, _ := gen.Generate(&mock{"Non-empty-file"})
+		sum := gen.Generate(&mock{"Non-empty-file"})
 		testGeneratedHashSum(sum)
 	})
 
 	It("Should generate a name for an empty string", func() {
-		sum, _ := gen.Generate(f)
+		sum := gen.Generate(f)
 		testGeneratedHashSum(sum)
 	})
 
@@ -38,7 +32,7 @@ var _ = Describe("Md5", func() {
 		func() {
 			f = &mock{"picture.jpg"}
 			gen = generator.NewMD5Generator(true)
-			sum, _ := gen.Generate(f)
+			sum := gen.Generate(f)
 			Expect(sum).To(HaveSuffix("jpg"))
 		})
 

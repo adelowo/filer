@@ -19,7 +19,7 @@ func NewMD5Generator(keepExt bool) *MD5Generator {
 	return &MD5Generator{keepExtension: keepExt}
 }
 
-func (m *MD5Generator) Generate(f filer.File) (string, error) {
+func (m *MD5Generator) Generate(f filer.File) string {
 
 	sum := md5.Sum([]byte(f.Name()))
 
@@ -29,5 +29,5 @@ func (m *MD5Generator) Generate(f filer.File) (string, error) {
 		sumAsString = fmt.Sprintf("%s%s", sumAsString, path.Ext(f.Name()))
 	}
 
-	return sumAsString, nil
+	return sumAsString
 }

@@ -15,7 +15,7 @@ var _ = Describe("Slug", func() {
 
 	var _ = DescribeTable("Slugifies name",
 		func(original, slugified string) {
-			slugged, _ := gen.Generate(&mock{original})
+			slugged := gen.Generate(&mock{original})
 			Expect(strings.EqualFold(slugged, slugified)).
 				To(BeTrue())
 		},
