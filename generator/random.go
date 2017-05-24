@@ -3,9 +3,14 @@ package generator
 import (
 	"math/rand"
 	"path"
+	"time"
 
 	"github.com/adelowo/filer"
 )
+
+func init() {
+	rand.Seed(time.Now().Unix())
+}
 
 const knownCharacters = "abcdefghijklmnopqrstuvwxyz" +
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
