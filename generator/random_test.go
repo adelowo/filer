@@ -12,31 +12,23 @@ var _ = Describe("Random", func() {
 	It("Should panic if a random string of length zero or less is requested", func() {
 		go func() {
 			defer GinkgoRecover()
-			generator.NewRandomGenerator(0, true)
+			generator.NewRandomGenerator(0)
 		}()
 	})
 
 	It("Generates a random string with the file extension suffixed", func() {
-		ran := generator.NewRandomGenerator(12, true)
+		ran := generator.NewRandomGenerator(12)
 
 		generatedName := ran.Generate(&mock{"filename.jpg"})
 
 		Expect(generatedName).To(HaveSuffix(".jpg"))
 	})
 
-	It("Generates a random string without the file extension suffixed", func() {
-		ran := generator.NewRandomGenerator(10, false)
-
-		generatedName := ran.Generate(&mock{"filename.jpg"})
-
-		Expect(generatedName).NotTo(HaveSuffix(".jpg"))
-	})
-
 	It("Generates a random string", func() {
 
-		ran := generator.NewRandomGenerator(10, false)
+		ran := generator.NewRandomGenerator(10)
 
-		generatedName := ran.Generate(&mock{"filename"})
+		generatedName := ran.Generate(&mock{"filename.jpg"})
 
 		Expect(generatedName).NotTo(BeEmpty())
 	})

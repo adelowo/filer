@@ -17,21 +17,18 @@ const knownCharacters = "abcdefghijklmnopqrstuvwxyz" +
 //RandomGenerator generates a random string that can be used as a file name
 //instead of it's original name
 type RandomGenerator struct {
-	length        int
-	keepExtension bool
+	length int
 }
 
 //NewRandomGenerator returns an instance of a RandomGenerator
 //If length is less than (or equal to) 0, a panic would occur
-//If keepExt is false, only the random string would be returned
-//If true, the random string and the file extension is returned
-func NewRandomGenerator(l int, keepExt bool) *RandomGenerator {
+func NewRandomGenerator(l int) *RandomGenerator {
 
 	if l <= 0 {
 		panic("Length cannot be zero or less")
 	}
 
-	return &RandomGenerator{length: l, keepExtension: keepExt}
+	return &RandomGenerator{length: l}
 }
 
 func (r *RandomGenerator) Generate(f filer.File) string {
@@ -41,11 +38,5 @@ func (r *RandomGenerator) Generate(f filer.File) string {
 		byt[i] = knownCharacters[rand.Intn(len(knownCharacters))]
 	}
 
-	ret := string(byt)
-
-	if r.keepExtension {
-		ret = ret + "." + filer.Extension(f)
-	}
-
-	return ret
+	return string(byt) + "." + filer.Extension(f)
 }

@@ -13,25 +13,20 @@ var _ = Describe("Md5", func() {
 	var f filer.File
 
 	BeforeEach(func() {
-		gen = generator.NewMD5Generator(false)
+		gen = generator.NewMD5Generator()
 		f = &mock{}
 	})
 
 	It("Should generate a string for a non empty string", func() {
 
-		sum := gen.Generate(&mock{"Non-empty-file"})
-		testGeneratedHashSum(sum)
-	})
-
-	It("Should generate a name for an empty string", func() {
-		sum := gen.Generate(f)
+		sum := gen.Generate(&mock{"Non-empty-file.jpg"})
 		testGeneratedHashSum(sum)
 	})
 
 	It("Should generate a name and keep the extension of the original file name",
 		func() {
 			f = &mock{"picture.jpg"}
-			gen = generator.NewMD5Generator(true)
+			gen = generator.NewMD5Generator()
 			sum := gen.Generate(f)
 			Expect(sum).To(HaveSuffix("jpg"))
 		})
@@ -40,5 +35,4 @@ var _ = Describe("Md5", func() {
 
 func testGeneratedHashSum(hash string) {
 	Expect(hash).NotTo(BeEmpty())
-	Expect(hash).To(HaveLen(32))
 }
