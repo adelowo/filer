@@ -60,16 +60,17 @@ func (l *LocalAdapter) Delete(path string) error {
 	return l.afero.Remove(l.gen(l.baseDir, path))
 }
 
-func (l *LocalAdapter) Has(path string) (bool, error) {
-	exists, err := l.afero.Exists(l.gen(l.baseDir, path))
+func (l *LocalAdapter) Exists(path string) (bool, error) {
 
-	//The way afero handles Exists is kinda weird though
+	//underscoring the error here since
+	//the way afero handles Exists is kinda weird though
 	//err isn't supposed to be nil if exists is false
-	if !exists && (err == nil) {
-		return exists, ErrLocalFileDoesNotExist
+
+	if exists, _ := l.afero.Exists(l.gen(l.baseDir, path)); !exists {
+		return false, ErrLocalFileDoesNotExist
 	}
 
-	return exists, err
+	return true, nil
 }
 
 func (l *LocalAdapter) URL(path string) string {

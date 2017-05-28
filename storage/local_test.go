@@ -70,14 +70,14 @@ var _ = Describe("Local", func() {
 	It("Checks if a file exists", func() {
 
 		By("returning an error if the file doesn't exist", func() {
-			_, err := local.Has("somepath")
+			_, err := local.Exists("somepath")
 
 			Expect(err).To(HaveOccurred())
 			Expect(err).To(BeEquivalentTo(ErrLocalFileDoesNotExist))
 		})
 
 		By("Returning a falsy value if the file does not exist", func() {
-			exists, _ := local.Has("somepath")
+			exists, _ := local.Exists("somepath")
 
 			Expect(exists).To(BeFalse())
 		})
@@ -86,7 +86,7 @@ var _ = Describe("Local", func() {
 
 			local.Write("somepath", strings.NewReader("Yup! Just wrote some data"))
 
-			exists, err := local.Has("somepath")
+			exists, err := local.Exists("somepath")
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(exists).To(BeTrue())
