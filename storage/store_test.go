@@ -6,45 +6,41 @@ import (
 	"path/filepath"
 	"strings"
 
-	. "github.com/adelowo/filer/storage"
+	"github.com/adelowo/filer/storage"
 	"github.com/spf13/afero"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var _ Store = (*LocalAdapter)(nil)
+var _ storage.Store = (*storage.FilerStorage)(nil)
 
 var _ = Describe("Local", func() {
 
-	var local Store
+	var storeAdapter storage.Store
 	var fs afero.Fs
 
 	BeforeEach(func() {
 		fs = afero.NewMemMapFs()
-		local = NewLocalAdapter("users", fs, nil)
-	})
-
-	JustBeforeEach(func() {
-		fs.RemoveAll("users")
+		storeAdapter = storage.NewFilerStorage(fs, nil)
 	})
 
 	Context("Writing a file", func() {
 
 		It("Should have an error if the file cannot be written to", func() {
 			fs = afero.NewReadOnlyFs(fs)
-			local = NewLocalAdapter("users", fs, nil)
+			storeAdapter = storage.NewFilerStorage(fs, nil)
 
-			Expect(local.Write("names/42",
+			Expect(storeAdapter.Write("names/42",
 				strings.NewReader("Lanre Adelowo"))).To(HaveOccurred())
 		})
 
 		It("should not have an error", func() {
 			r := bytes.NewReader([]byte("Lanre Adelowo"))
-			Expect(local.Write("users/42", r)).NotTo(HaveOccurred())
+			Expect(storeAdapter.Write("users/42", r)).NotTo(HaveOccurred())
 		})
 
-		//TODO (adelowo): Add tests for situations when io.Reader returns an erro
+		//TODO (adelowo): Add tests for situations when io.Reader returns an error
 	})
 
 	Context("Deleting a file", func() {
@@ -52,15 +48,15 @@ var _ = Describe("Local", func() {
 		It("Should not have any error", func() {
 			By("Deleting the file", func() {
 				//Write some data
-				local.Write("users/42", strings.NewReader("Lanre Adelowo"))
+				storeAdapter.Write("users/42", strings.NewReader("Lanre Adelowo"))
 
 				//Then delete it
-				Expect(local.Delete("users/42")).NotTo(HaveOccurred())
+				Expect(storeAdapter.Delete("users/42")).NotTo(HaveOccurred())
 			})
 		})
 
 		It("Cannot delete a non existent file", func() {
-			err := local.Delete("unknown/path")
+			err := storeAdapter.Delete("unknown/path")
 
 			Expect(err).To(HaveOccurred())
 			Expect(err).To(BeAssignableToTypeOf(&os.PathError{}))
@@ -70,23 +66,23 @@ var _ = Describe("Local", func() {
 	It("Checks if a file exists", func() {
 
 		By("returning an error if the file doesn't exist", func() {
-			_, err := local.Exists("somepath")
+			_, err := storeAdapter.Exists("somepath")
 
 			Expect(err).To(HaveOccurred())
-			Expect(err).To(BeEquivalentTo(ErrLocalFileDoesNotExist))
+			Expect(err).To(BeEquivalentTo(storage.ErrFileDoesNotExists))
 		})
 
 		By("Returning a falsy value if the file does not exist", func() {
-			exists, _ := local.Exists("somepath")
+			exists, _ := storeAdapter.Exists("somepath")
 
 			Expect(exists).To(BeFalse())
 		})
 
 		By("Returning a truthy value and no error if the file exists", func() {
 
-			local.Write("somepath", strings.NewReader("Yup! Just wrote some data"))
+			storeAdapter.Write("somepath", strings.NewReader("Yup! Just wrote some data"))
 
-			exists, err := local.Exists("somepath")
+			exists, err := storeAdapter.Exists("somepath")
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(exists).To(BeTrue())
@@ -94,24 +90,21 @@ var _ = Describe("Local", func() {
 	})
 
 	It("Should return the URL for a given path", func() {
-		//From the setup, we have the base directory as "users"
-		expected := filepath.Join("users", "avatars", "lanre", "large", "x.jpg")
+		expected := filepath.Join("avatars", "lanre", "large", "x.jpg")
 
-		Expect(local.URL("avatars/lanre/large/x.jpg")).Should(Equal(expected))
+		Expect(storeAdapter.URL("avatars/lanre/large/x.jpg")).Should(Equal(expected))
 	})
 
 	It("Makes use of a custom filepath generator", func() {
 
-		baseDir := "users"
-
 		pathPrefix := filepath.Join("oops", "whoops")
 
-		local = NewLocalAdapter(baseDir, fs, func(baseDirectory, path string) string {
-			return filepath.Join(baseDirectory, pathPrefix, path)
+		storeAdapter = storage.NewFilerStorage(fs, func(path string) string {
+			return filepath.Join(pathPrefix, path)
 		})
 
-		expected := filepath.Join(baseDir, pathPrefix, "shoops")
+		expected := filepath.Join(pathPrefix, "shoops")
 
-		Expect(local.URL("shoops")).Should(Equal(expected))
+		Expect(storeAdapter.URL("shoops")).Should(Equal(expected))
 	})
 })
