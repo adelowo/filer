@@ -4,7 +4,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"path"
 
 	"github.com/adelowo/filer"
 )
@@ -26,7 +25,7 @@ func (m *MD5Generator) Generate(f filer.File) string {
 	sumAsString := hex.EncodeToString(sum[:])
 
 	if m.keepExtension {
-		sumAsString = fmt.Sprintf("%s%s", sumAsString, path.Ext(f.Name()))
+		sumAsString = fmt.Sprintf("%s%s", sumAsString, filer.Extension(f))
 	}
 
 	return sumAsString

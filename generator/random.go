@@ -2,7 +2,6 @@ package generator
 
 import (
 	"math/rand"
-	"path"
 	"time"
 
 	"github.com/adelowo/filer"
@@ -45,7 +44,7 @@ func (r *RandomGenerator) Generate(f filer.File) string {
 	ret := string(byt)
 
 	if r.keepExtension {
-		ret = ret + path.Ext(f.Name())
+		ret = ret + "." + filer.Extension(f)
 	}
 
 	return ret

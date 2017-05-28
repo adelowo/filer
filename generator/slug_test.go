@@ -20,8 +20,8 @@ var _ = Describe("Slug", func() {
 				To(BeTrue())
 		},
 		Entry("Slufies name with single space",
-			"some name", "some-name"),
+			"some name.MD", "some-name.MD"),
 		Entry("Slufies name with multiple spaces",
-			"some multi  spaced name", "some-multi-spaced-name"),
+			"some multi  spaced name.MD", "some-multi-spaced-name.MD"),
 	)
 })
