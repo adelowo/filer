@@ -15,7 +15,7 @@ import (
 
 var _ storage.Store = (*storage.FilerStorage)(nil)
 
-var _ = Describe("Local", func() {
+var _ = Describe("FilerStorage", func() {
 
 	var storeAdapter storage.Store
 	var fs afero.Fs
