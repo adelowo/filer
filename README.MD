@@ -5,6 +5,7 @@
 
 - [Installation](#install)
 - [Utilities](#utils)
+- [Example usage](#usage)
 
 <div id="install"> </div>
 
@@ -23,7 +24,7 @@ $ go get https://github.com/adelowo/filer
   > Validate a file by it's size
 
   ```go
-  val = NewSizeValidator(int64(60), int64(70))
+  val = NewSizeValidator((1024*1024 * 2), (200 * 1024)) //2MB(maxSize) and 200KB(minSize)
   file, _ = os.Open("./path/to/file")
 
   isValid, err := val.Validate(file)
@@ -89,6 +90,81 @@ $ go get https://github.com/adelowo/filer
  storeAdapter = storage.NewFilerStorage(fs, nil) //can also pass in a PathFunc instead of nil
 
  ```
+
+<div id="usage"> </div>
+
+A sample usage of this library would be :
+
+```go
+package main
+
+import (
+	"io"
+	"io/ioutil"
+	"net/http"
+
+	"github.com/adelowo/filer/storage"
+	"github.com/adelowo/filer/validator"
+	"github.com/spf13/afero"
+)
+
+func main() {
+	http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			io.WriteString(w, "You came here")
+			return
+		}
+
+		if r.Method == "POST" {
+			file, header, err := r.FormFile("formNameInHTMLform")
+
+			if err != nil {
+				io.WriteString(w, err.Error())
+				return
+			}
+
+			buf, err := ioutil.ReadAll(file)
+
+			if err != nil {
+				io.WriteString(w, err.Error())
+				return
+			}
+
+			//Move to a temporary location
+			//This is allow us be able to get details like it's size and others
+
+			f, err := ioutil.TempFile("", header.Filename)
+
+			if err != nil {
+				panic("An error occurred while trying to create a temporary file")
+			}
+
+			val = validator.NewMimeTypeValidator([]string{"image/jpeg", "image/png"})
+			val2 = validator.NewSizeValidator((1024 * 1024 * 2), (200 * 1024)) //2MB(maxSize) and 200KB(minSize)
+
+			if _, err := val.Validate(f); err != nil {
+				panic("Validation failed")
+			}
+			if _, err := val2.Validate(f); err != nil {
+				panic("Validation failed")
+			}
+
+
+			//Upload to some place
+			fs = afero.NewMemMapFs() //Using an inmemory store here..
+			storeAdapter = storage.NewFilerStorage(fs, nil)
+
+			if err := storeAdapter.Write("some/path", f); err != nil {
+				panic("An error occurred while writing the file")
+			}
+
+			io.WriteString(w, "The upload was successful")
+      return
+		}
+	})
+}
+
+```
 
 ### License
 MIT
