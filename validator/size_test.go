@@ -18,7 +18,7 @@ var _ = Describe("Size", func() {
 	Context("Validating a file", func() {
 
 		BeforeEach(func() {
-			val = NewSizeValidator(int64(60), int64(70))
+			val = NewSizeValidator(155648, 145408) //152KB and 142KB
 			file, _ = os.Open("./fixtures/gopher.jpg")
 		})
 
@@ -37,7 +37,7 @@ var _ = Describe("Size", func() {
 			})
 
 			By("Inspecting the file size and deeming it too small", func() {
-				val := NewSizeValidator(200, 183)
+				val := NewSizeValidator(1048576, 204800) //1MB and 200KB
 
 				_, err := val.Validate(file)
 				Expect(err).To(Equal(ErrFileSizeTooSmall))
@@ -45,7 +45,7 @@ var _ = Describe("Size", func() {
 		})
 
 		It("passes validation", func() {
-			val := NewSizeValidator(250, 70)
+			val := NewSizeValidator((168 * 1024), (100 * 1024)) //168KB and 100KB
 
 			isValid, err := val.Validate(file)
 			Expect(err).ShouldNot(HaveOccurred())

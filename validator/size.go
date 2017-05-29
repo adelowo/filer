@@ -11,6 +11,8 @@ import (
 var ErrFileSizeTooLarge = errors.New(`
 	size validator: File size is too large`)
 
+//ErrFileSizeTooSmall is an error type that denotes a file is too small
+//Thus the reason behind the validation's failure
 var ErrFileSizeTooSmall = errors.New(`
 	size validator: File size is too small`)
 
@@ -21,18 +23,9 @@ type SizeValidator struct {
 }
 
 //NewSizeValidator returns an instance of a SizeValidator
+//maxSize and minSize are to be given in bytes
 func NewSizeValidator(maxSize, minSize int64) *SizeValidator {
-	s := &SizeValidator{}
-
-	if maxSize > 0 {
-		s.maxSize = maxSize * 1024
-	}
-
-	if minSize > 0 {
-		s.minSize = minSize * 1024
-	}
-
-	return s
+	return &SizeValidator{maxSize, minSize}
 }
 
 //Validate validates a file based on it's size
