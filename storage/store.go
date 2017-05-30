@@ -24,7 +24,7 @@ type FilerStorage struct {
 type PathFunc func(path string) string
 
 func NewFilerStorage(fs afero.Fs, pathGenerator PathFunc) *FilerStorage {
-	store := &FilerStorage{afero: &afero.Afero{fs}}
+	store := &FilerStorage{afero: &afero.Afero{Fs: fs}}
 
 	if pathGenerator == nil {
 		store.gen = defaultPathFunc
