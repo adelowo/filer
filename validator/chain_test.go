@@ -46,4 +46,18 @@ var _ = Describe("Chain", func() {
 			Expect(ok).To(BeFalse())
 		})
 
+	It("Should bail out quickly if only one validator is in the chain",
+		func() {
+			validator := NewChainedValidator(
+				NewSizeValidator((1024 * 1024), (1024 * 6))) //1MB and 6 KB
+
+			file, err := os.Open("./fixtures/gopher.jpg")
+
+			Expect(err).NotTo(HaveOccurred())
+
+			ok, err := validator.Validate(file)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(ok).To(BeTrue())
+
+		})
 })

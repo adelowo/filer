@@ -27,6 +27,10 @@ func NewChainedValidator(v ...Validator) *ChainedValidator {
 
 func (c *ChainedValidator) Validate(f filer.File) (bool, error) {
 
+	if len(c.chain) == 1 {
+		return c.chain[0].Validate(f)
+	}
+
 	for _, validator := range c.chain {
 		if valid, err := validator.Validate(f); err != nil {
 			return valid, err
