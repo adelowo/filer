@@ -3,6 +3,7 @@ package filer
 import (
 	"path"
 	"strings"
+	"unicode"
 )
 
 //Extension returns the known extension of a given file
@@ -18,7 +19,7 @@ func NormalizeExtension(s string) string {
 
 	return strings.Map(func(r rune) rune {
 
-		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') {
+		if upper := unicode.ToUpper(r); upper > 'A' && upper <= unicode.MaxASCII {
 			return r
 		}
 
