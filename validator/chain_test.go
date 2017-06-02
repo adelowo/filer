@@ -11,12 +11,6 @@ import (
 
 var _ = Describe("Chain", func() {
 
-	It("Should panic if no validators are added to the chain", func() {
-		go func() {
-			defer GinkgoRecover()
-			_ = NewChainedValidator()
-		}()
-	})
 
 	It("Should properly validate the files based on the chain", func() {
 		validator := NewChainedValidator(
