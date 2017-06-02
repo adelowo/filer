@@ -52,6 +52,20 @@ $ go get https://github.com/adelowo/filer
   isValid, err := val.Validate(file)
   ```
 
+> You can also make use of a chained validator to ease the pain of having to deal with multiple validators manually
+
+```go
+
+validator := NewChainedValidator(
+  NewExtensionValidator([]string{"go", "ts", "jpg"}),
+  NewSizeValidator((1024*1024), (1024*6))) //1MB and 6 KB
+
+file, _ := os.Open("./path/to/file.jpg")
+
+isValid, err := validator.Validate(file)
+
+```
+
 - File Name Generators:
 
   - `MD5Generator` :
