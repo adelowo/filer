@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"os"
 
+	"github.com/adelowo/filer"
+
 	. "github.com/adelowo/filer/validator"
 
 	. "github.com/onsi/ginkgo"
@@ -18,7 +20,9 @@ var _ = Describe("Size", func() {
 	Context("Validating a file", func() {
 
 		BeforeEach(func() {
-			val = NewSizeValidator(155648, 145408) //152KB and 142KB
+			size1, _ := filer.LengthInBytes("152KB")
+			size2, _ := filer.LengthInBytes("142KB")
+			val = NewSizeValidator(size1, size2)
 			file, _ = os.Open("./fixtures/gopher.jpg")
 		})
 

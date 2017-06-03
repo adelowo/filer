@@ -24,7 +24,10 @@ $ go get https://github.com/adelowo/filer
   > Validate a file by it's size
 
   ```go
-  val = NewSizeValidator((1024*1024 * 2), (200 * 1024)) //2MB(maxSize) and 200KB(minSize)
+  max, _ := filer.LengthInBytes("2MB")
+  min, _ := filer.LengthInBytes("200KB")
+
+  val = NewSizeValidator(max, min)
   file, _ = os.Open("./path/to/file")
 
   isValid, err := val.Validate(file)
