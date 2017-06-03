@@ -24,6 +24,36 @@ var _ = Describe("Utils", func() {
 		Entry("Multiple numeric characters", "567MD1234", "MD"),
 	)
 
+	var _ = DescribeTable(`
+		Converting human readable strings to their equivalent in Bytes`,
+		func(original string, expected int64, hasError bool) {
+			val, err := filer.LengthInBytes(original)
+
+			if hasError {
+				Expect(err).To(HaveOccurred())
+				return
+			}
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(val).To(Equal(expected))
+		},
+
+		Entry("Converting an unsupported unit type", "1ZB", int64(-1), true),
+		Entry("An error should occur when trying to convert a word into an integer",
+			"twoKB", int64(-1), true),
+		Entry("Converting Single digit byte", "1B", int64(1), false),
+		Entry("Converting bytes with a double digit number", "10B", int64(10), false),
+		Entry("Converting Single digit Kilobyte", "1KB", int64(1024), false),
+		Entry("Converting kilobytes with a double digit number", "12KB", int64(12288), false),
+		Entry("Conversion should not work for 'K' but 'KB' alone", "1K", int64(-1), true),
+		Entry("Converting a single digit Megabyte", "1MB", int64(1048576), false),
+		Entry("Converting a double digit Megabyte", "31MB", int64(32505856), false),
+		Entry("Conversion should not work for 'M' but 'MB' alone", "31M", int64(-1), true),
+		Entry("Converting a single digit Gigabyte", "1GB", int64(1073741824), false),
+		Entry("Converting a double digit Gigabyte", "20GB", int64(21474836480), false),
+		Entry("Conversion should not work for 'G' but 'GB' alone", "1M", int64(-1), true),
+	)
+
 	It("Returns the extension when given a file name", func() {
 		Expect(filer.Extension(&mock{name: "fileName.MD"})).
 			To(Equal("MD"))
