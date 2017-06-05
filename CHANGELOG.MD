@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 (2017-06-05)
+
+- Fixed bug in `LengthInBytes` accepting invalid units (such as "1KBB","1MBB")
+
 ## 1.1.0 (2017-06-03)
 
 - Added `ChainedValidator` to ease dealing with multiple validators manually
