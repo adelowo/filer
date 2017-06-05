@@ -52,6 +52,11 @@ var _ = Describe("Utils", func() {
 		Entry("Converting a single digit Gigabyte", "1GB", int64(1073741824), false),
 		Entry("Converting a double digit Gigabyte", "20GB", int64(21474836480), false),
 		Entry("Conversion should not work for 'G' but 'GB' alone", "1M", int64(-1), true),
+
+		Entry("Conversion should not work for 'KBB'", "1KBB", int64(-1), true),
+		Entry("Conversion should not work for 'GBB'", "1GBB", int64(-1), true),
+		Entry("Conversion should not work for 'MB'", "MBB", int64(-1), true),
+		Entry("Conversion should not work for 'TBB'", "TKBB", int64(-1), true),
 	)
 
 	It("Returns the extension when given a file name", func() {
