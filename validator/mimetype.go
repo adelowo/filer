@@ -2,7 +2,6 @@ package validator
 
 import (
 	"errors"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/adelowo/filer"
@@ -29,10 +28,8 @@ func NewMimeTypeValidator(mimeTypes []string) *MimeTypeValidator {
 //Currrently, the mimetype of the file is gotten by through the DetectContentType
 //function in net/http.
 func (mime *MimeTypeValidator) Validate(f filer.File) (bool, error) {
-
-	buf, err := ioutil.ReadAll(f)
-
-	if err != nil {
+	buf := make([]byte, 513)
+	if _, err := f.Read(buf[0:512]); err != nil {
 		return false, err
 	}
 
