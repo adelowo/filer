@@ -23,6 +23,12 @@ var _ = Describe("Mimetype", func() {
 		file.Close()
 	})
 
+	It("should return an error if the file cannot be read", func() {
+		isValid, err := val.Validate(&mock{})
+		Expect(err).To(HaveOccurred())
+		Expect(isValid).To(BeFalse())
+	})
+
 	It("should not have an error if the mimetype is valid", func() {
 		isValid, err := val.Validate(file)
 
