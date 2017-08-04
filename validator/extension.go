@@ -24,23 +24,21 @@ func NewExtensionValidator(allowedExtensions []string) *ExtensionValidator {
 
 //Validate checks if a file is valid by looking at it's extension
 func (e *ExtensionValidator) Validate(f filer.File) (bool, error) {
-	if isValidExtension(
-		e.validExtensions, filer.Extension(f)) {
+	if existsInSlice(filer.Extension(f), e.validExtensions...) {
 		return true, nil
 	}
 
 	return false, ErrFileInvalidExtension
 }
 
-func isValidExtension(allowed []string, current string) bool {
-	var valid bool
-
-	for _, v := range allowed {
-		if v == current {
-			valid = true
+func existsInSlice(toFind string, slice ...string) bool {
+	var found bool
+	for _, v := range slice {
+		if v == toFind {
+			found = true
 			break
 		}
 	}
 
-	return valid
+	return found
 }

@@ -33,21 +33,7 @@ func (mime *MimeTypeValidator) Validate(f filer.File) (bool, error) {
 		return false, err
 	}
 
-	return isValidMimeType(mime.validMimeTypes, http.DetectContentType(buf))
-}
-
-func isValidMimeType(allowed []string, currentMimeType string) (bool, error) {
-
-	var isValid bool
-
-	for _, v := range allowed {
-		if v == currentMimeType {
-			isValid = true
-			break
-		}
-	}
-
-	if isValid {
+	if existsInSlice(http.DetectContentType(buf), mime.validMimeTypes...) {
 		return true, nil
 	}
 
