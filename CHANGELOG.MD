@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.3 (2017-08-05)
+
+- Fixed bug in `LengthInBytes` (again :open_mouth:) accepting an invalid byte size such as `1BB`.
+
 ## 1.1.2 (2017-07-29)
 
 - Improved performance of `MimeTypeValidator` by not reading the entire file into memory. Since the algorithm used at https://golang.org/pkg/net/http/#DetectContentType considers at most the first 512 bytes, it makes no sense to get the entire bytes.
