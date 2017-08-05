@@ -47,10 +47,13 @@ var _ = Describe("Utils", func() {
 		Entry("Converting Single digit Kilobyte", "1KB", int64(1024), false),
 		Entry("Converting kilobytes with a double digit number", "12KB", int64(12288), false),
 		Entry("Conversion should not work for 'K' but 'KB' alone", "1K", int64(-1), true),
+		Entry("Conversion should not work for KBB", "1KBB", int64(-1), true),
 		Entry("Converting a single digit Megabyte", "1MB", int64(1048576), false),
 		Entry("Converting a double digit Megabyte", "31MB", int64(32505856), false),
 		Entry("Conversion should not work for 'M' but 'MB' alone", "31M", int64(-1), true),
+		Entry("Converting bytes with a MBB", "1MBB", int64(10485676), true),
 		Entry("Converting a single digit Gigabyte", "1GB", int64(1073741824), false),
+		Entry("Converting a GBB", "1GBB", int64(-1), true),
 		Entry("Converting a double digit Gigabyte", "20GB", int64(21474836480), false),
 		Entry("Conversion should not work for 'G' but 'GB' alone", "1M", int64(-1), true),
 
