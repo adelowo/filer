@@ -12,7 +12,7 @@ import (
 var re *regexp.Regexp
 
 func init() {
-	re = regexp.MustCompile(`(\d+)([KMGT]B$|B)`)
+	re = regexp.MustCompile(`(\d+)([KMGT]B$|B$)`)
 }
 
 const (

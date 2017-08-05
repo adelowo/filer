@@ -43,6 +43,7 @@ var _ = Describe("Utils", func() {
 			"twoKB", int64(-1), true),
 		Entry("Converting Single digit byte", "1B", int64(1), false),
 		Entry("Converting bytes with a double digit number", "10B", int64(10), false),
+		Entry("Converting bytes with a BB", "10BB", int64(10), true),
 		Entry("Converting Single digit Kilobyte", "1KB", int64(1024), false),
 		Entry("Converting kilobytes with a double digit number", "12KB", int64(12288), false),
 		Entry("Conversion should not work for 'K' but 'KB' alone", "1K", int64(-1), true),
