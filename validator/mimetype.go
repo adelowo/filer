@@ -29,7 +29,7 @@ func NewMimeTypeValidator(mimeTypes []string) *MimeTypeValidator {
 //function in net/http.
 func (mime *MimeTypeValidator) Validate(f filer.File) (bool, error) {
 	buf := make([]byte, 513)
-	if _, err := f.Read(buf[0:512]); err != nil {
+	if _, err := f.Read(buf[:512]); err != nil {
 		return false, err
 	}
 
