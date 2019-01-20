@@ -11,7 +11,7 @@
 
 ```bash
 
-$ go get https://github.com/adelowo/filer
+$ go get github.com/adelowo/filer
 
 ```
 
